@@ -6,9 +6,6 @@ public class DeviceRequestWrapper {
 	@JsonProperty("device")
 	public String device;
 	
-	@JsonProperty("tag")
-	public String tag;
-	
 	@JsonProperty("token")
 	public String token;
 }

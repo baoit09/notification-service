@@ -1,5 +1,5 @@
 applications:
-  - name: tamnt-notification-service
+  - name: tamnt-notification-microservice
     buildpack: java_buildpack
     path: target/winddata-timeseries-service-2.0.26.jar
     memory: 500M

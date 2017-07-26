@@ -25,11 +25,10 @@ import com.fpt.poc.microservice.notification.dto.Device;
 import com.fpt.poc.microservice.notification.dto.DeviceRequestWrapper;
 import com.fpt.poc.microservice.notification.dto.PushRequestWrapper;
 import com.ge.predix.solsvc.spi.IServiceManagerService;
-import com.ge.predix.solsvc.winddata.impl.WindDataImpl;
 
 @Component
 public class NotificationImpl implements INotificationAPI {
-	private Logger log = LoggerFactory.getLogger(WindDataImpl.class);
+	private Logger log = LoggerFactory.getLogger(NotificationImpl.class);
 	private HttpURLConnection connection = null;
 	private ArrayList<Device> devices = new ArrayList<Device>();
 
@@ -58,15 +57,20 @@ public class NotificationImpl implements INotificationAPI {
 
 	@SuppressWarnings("nls")
 	@Override
-	public Response PushFollowTag(String id, PushRequestWrapper requestWrapper) {
-		if (id != "" && requestWrapper.message != "") {
-			ArrayList<Device> devices = getDeviceByTag(id);
-			for (int i = 0; i < devices.size(); i++) {
-				pushDevice(devices.get(i).RefreshToken, requestWrapper.message);
-			}
+	public Response GetAllDevice() {
+		return handleResult(devices);
+	}
+
+	@SuppressWarnings("nls")
+	@Override
+	public Response Delete(String id) {
+		String result = "{ \"result\": \"success\"}";
+		Device device = getDeviceByDeviceId(id);
+		if (device == null) {
+			result = "{ \"result\": \"Not found device\"}";
 		}
 
-		String result = "{ \"result\": \"success\"}";
+		this.devices.remove(device);
 		return handleResult(result);
 	}
 
@@ -123,10 +127,10 @@ public class NotificationImpl implements INotificationAPI {
 
 	@SuppressWarnings("nls")
 	@Override
-	public Response PushAll(String message) {
-		if (message != "") {
+	public Response PushAll(PushRequestWrapper requestWrapper) {
+		if (requestWrapper.message != "") {
 			for (int i = 0; i < devices.size(); i++) {
-				pushDevice(devices.get(i).RefreshToken, message);
+				pushDevice(devices.get(i).RefreshToken, requestWrapper.message);
 			}
 		}
 
@@ -219,7 +223,7 @@ public class NotificationImpl implements INotificationAPI {
 	}
 
 	private boolean validateRegisterRequest(DeviceRequestWrapper deviceRequest) {
-		if (deviceRequest.device == "" || deviceRequest.tag == "" || deviceRequest.token == "") {
+		if (deviceRequest.device == "" || deviceRequest.token == "") {
 			return false;
 		}
 		return true;
@@ -234,17 +238,5 @@ public class NotificationImpl implements INotificationAPI {
 		}
 
 		return null;
-	}
-
-	private ArrayList<Device> getDeviceByTag(String tagId) {
-		ArrayList<Device> list = new ArrayList<Device>();
-		for (int i = 0; i < devices.size(); i++) {
-			Device device = devices.get(i);
-			if (device.Tag.equals(tagId)) {
-				list.add(device);
-			}
-		}
-
-		return list;
 	}
 }

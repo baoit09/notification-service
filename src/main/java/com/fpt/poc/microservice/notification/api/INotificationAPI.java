@@ -1,6 +1,7 @@
 package com.fpt.poc.microservice.notification.api;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -24,11 +25,11 @@ import io.swagger.annotations.ApiOperation;
 @Produces({ "application/json", "application/xml" })
 @Path("/notification")
 @Api(value = "/notification")
-public interface INotificationAPI {
-	@POST
-	@Path("/push/tag/{id}")
-	@ApiOperation(value = "/push/tag/{id}")
-	public Response PushFollowTag(@PathParam("id") String id, @RequestBody PushRequestWrapper requestWrapper);
+public interface INotificationAPI {	
+	@GET
+	@Path("/devices")
+	@ApiOperation(value = "/devices")
+	public Response GetAllDevice();
 	
 	@POST
 	@Path("/push/device/{id}")
@@ -38,10 +39,15 @@ public interface INotificationAPI {
 	@POST
 	@Path("/push/all")
 	@ApiOperation(value = "/push/all")
-	Response PushAll(@RequestBody String requestWrapper);
+	Response PushAll(@RequestBody PushRequestWrapper requestWrapper);
 
 	@POST
 	@Path("/register")
 	@ApiOperation(value = "/register")
 	public Response Register(@RequestBody DeviceRequestWrapper requestWrapper);
+	
+	@DELETE
+	@Path("/device/{id}")
+	@ApiOperation(value = "/device/{id}")
+	public Response Delete(@PathParam("id") String id);
 }
